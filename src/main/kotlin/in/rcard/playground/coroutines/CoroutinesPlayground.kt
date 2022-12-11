@@ -8,13 +8,17 @@ import org.slf4j.LoggerFactory
 val logger: Logger = LoggerFactory.getLogger("CoroutinesPlayground")
 suspend fun main() {
     logger.info("Starting the morning routine")
+    sequentialMorningRoutine()
+    logger.info("Ending the morning routine")
+}
+
+suspend fun sequentialMorningRoutine() {
     coroutineScope {
         bathTime()
     }
     coroutineScope {
         boilingWater()
     }
-    logger.info("Ending the morning routine")
 }
 
 suspend fun bathTime() {

@@ -1,5 +1,6 @@
 package `in`.rcard.playground.coroutines
 
+import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -9,7 +10,7 @@ import org.slf4j.LoggerFactory
 val logger: Logger = LoggerFactory.getLogger("CoroutinesPlayground")
 suspend fun main() {
     logger.info("Starting the morning routine")
-    concurrentMorningRoutine()
+    noStructuralConcurrencyMorningRoutine()
     logger.info("Ending the morning routine")
 }
 
@@ -31,6 +32,16 @@ suspend fun concurrentMorningRoutine() {
             boilingWater()
         }
     }
+}
+
+suspend fun noStructuralConcurrencyMorningRoutine() {
+    GlobalScope.launch {
+        bathTime()
+    }
+    GlobalScope.launch {
+        boilingWater()
+    }
+    Thread.sleep(1500L)
 }
 
 suspend fun bathTime() {

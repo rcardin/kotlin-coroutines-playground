@@ -11,7 +11,7 @@ import org.slf4j.LoggerFactory
 val logger: Logger = LoggerFactory.getLogger("CoroutinesPlayground")
 suspend fun main() {
     logger.info("Starting the morning routine")
-    morningRoutineWithCoffee()
+    structuralConcurrentMorningRoutineWithCoffee()
     logger.info("Ending the morning routine")
 }
 
@@ -55,6 +55,22 @@ suspend fun morningRoutineWithCoffee() {
         }
         bathTimeJob.join()
         boilingWaterJob.join()
+        launch {
+            preparingCoffee()
+        }
+    }
+}
+
+suspend fun structuralConcurrentMorningRoutineWithCoffee() {
+    coroutineScope {
+        coroutineScope {
+            launch {
+                bathTime()
+            }
+            launch {
+                boilingWater()
+            }
+        }
         launch {
             preparingCoffee()
         }

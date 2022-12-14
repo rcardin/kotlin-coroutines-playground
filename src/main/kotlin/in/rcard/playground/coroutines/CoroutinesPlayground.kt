@@ -94,3 +94,10 @@ suspend fun preparingCoffee() {
     delay(500L)
     logger.info("Coffee prepared")
 }
+
+suspend fun preparingJavaCoffee(): String {
+    logger.info("Preparing coffee")
+    delay(500L)
+    logger.info("Coffee prepared")
+    return "Java coffee"
+}

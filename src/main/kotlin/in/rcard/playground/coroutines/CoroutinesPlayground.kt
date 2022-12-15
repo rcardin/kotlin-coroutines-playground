@@ -1,7 +1,9 @@
 package `in`.rcard.playground.coroutines
 
+import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -11,7 +13,7 @@ import org.slf4j.LoggerFactory
 val logger: Logger = LoggerFactory.getLogger("CoroutinesPlayground")
 suspend fun main() {
     logger.info("Starting the morning routine")
-    structuralConcurrentMorningRoutineWithCoffee()
+    breakfastPreparation()
     logger.info("Ending the morning routine")
 }
 
@@ -50,7 +52,7 @@ suspend fun morningRoutineWithCoffee() {
         val bathTimeJob: Job = launch {
             bathTime()
         }
-        val  boilingWaterJob: Job = launch {
+        val boilingWaterJob: Job = launch {
             boilingWater()
         }
         bathTimeJob.join()
@@ -77,6 +79,18 @@ suspend fun structuralConcurrentMorningRoutineWithCoffee() {
     }
 }
 
+suspend fun breakfastPreparation() {
+    coroutineScope {
+        val coffee: Deferred<String> = async {
+            preparingJavaCoffee()
+        }
+        val toast: Deferred<String> = async {
+            toastingBread()
+        }
+        logger.info("I'm eating ${coffee.await()} and ${toast.await()}")
+    }
+}
+
 suspend fun bathTime() {
     logger.info("Going to the bathroom")
     delay(500L)
@@ -100,4 +114,11 @@ suspend fun preparingJavaCoffee(): String {
     delay(500L)
     logger.info("Coffee prepared")
     return "Java coffee"
+}
+
+suspend fun toastingBread(): String {
+    logger.info("Toasting bread")
+    delay(1000L)
+    logger.info("Bread toasted")
+    return "Toasted bread"
 }

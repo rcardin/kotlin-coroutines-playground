@@ -122,3 +122,9 @@ suspend fun toastingBread(): String {
     logger.info("Bread toasted")
     return "Toasted bread"
 }
+
+suspend fun working() {
+    logger.info("Working")
+    delay(5000L)
+    logger.info("Work done")
+}

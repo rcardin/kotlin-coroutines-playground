@@ -1,6 +1,9 @@
 package `in`.rcard.playground.coroutines
 
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Deferred
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
@@ -13,7 +16,7 @@ import org.slf4j.LoggerFactory
 val logger: Logger = LoggerFactory.getLogger("CoroutinesPlayground")
 suspend fun main() {
     logger.info("Starting the morning routine")
-    breakfastPreparation()
+    workingConsciousnessRoutine()
     logger.info("Ending the morning routine")
 }
 
@@ -91,6 +94,32 @@ suspend fun breakfastPreparation() {
     }
 }
 
+@OptIn(ExperimentalCoroutinesApi::class)
+suspend fun workingHardRoutine() {
+    val dispatcher: CoroutineDispatcher = Dispatchers.Default.limitedParallelism(1)
+    coroutineScope {
+        launch(dispatcher) {
+            workingHard()
+        }
+        launch(dispatcher) {
+            takeABreak()
+        }
+    }
+}
+
+@OptIn(ExperimentalCoroutinesApi::class)
+suspend fun workingConsciousnessRoutine() {
+    val dispatcher: CoroutineDispatcher = Dispatchers.Default.limitedParallelism(1)
+    coroutineScope {
+        launch(dispatcher) {
+            workingConsciousness()
+        }
+        launch(dispatcher) {
+            takeABreak()
+        }
+    }
+}
+
 suspend fun bathTime() {
     logger.info("Going to the bathroom")
     delay(500L)
@@ -123,8 +152,25 @@ suspend fun toastingBread(): String {
     return "Toasted bread"
 }
 
-suspend fun working() {
+suspend fun workingHard() {
     logger.info("Working")
-    delay(5000L)
+    while (true) {
+        // Do nothing
+    }
+    delay(100L)
+    logger.info("Work done")
+}
+
+suspend fun takeABreak() {
+    logger.info("Taking a break")
+    delay(1000L)
+    logger.info("Break done")
+}
+
+suspend fun workingConsciousness() {
+    logger.info("Working")
+    while (true) {
+        delay(100L)
+    }
     logger.info("Work done")
 }

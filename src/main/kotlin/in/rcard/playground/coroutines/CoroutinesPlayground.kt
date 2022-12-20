@@ -16,7 +16,7 @@ import org.slf4j.LoggerFactory
 val logger: Logger = LoggerFactory.getLogger("CoroutinesPlayground")
 suspend fun main() {
     logger.info("Starting the morning routine")
-    workingConsciousnessRoutine()
+    forgettingTheBirthDayRoutine()
     logger.info("Ending the morning routine")
 }
 
@@ -116,6 +116,20 @@ suspend fun workingConsciousnessRoutine() {
         }
         launch(dispatcher) {
             takeABreak()
+        }
+    }
+}
+
+suspend fun forgettingTheBirthDayRoutine() {
+    coroutineScope {
+        val workingJob = launch {
+            workingConsciousness()
+        }
+        launch {
+            delay(2000L)
+            workingJob.cancel()
+            workingJob.join()
+            logger.info("I forgot the birthday! Let's go to the mall!")
         }
     }
 }

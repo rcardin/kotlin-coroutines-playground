@@ -7,6 +7,7 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
+import kotlinx.coroutines.cancelAndJoin
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -16,7 +17,7 @@ import org.slf4j.LoggerFactory
 val logger: Logger = LoggerFactory.getLogger("CoroutinesPlayground")
 suspend fun main() {
     logger.info("Starting the morning routine")
-    forgettingTheBirthDayRoutine()
+    forgettingTheBirthDayRoutineAndCleaningTheDesk()
     logger.info("Ending the morning routine")
 }
 
@@ -129,6 +130,52 @@ suspend fun forgettingTheBirthDayRoutine() {
             delay(2000L)
             workingJob.cancel()
             workingJob.join()
+            logger.info("I forgot the birthday! Let's go to the mall!")
+        }
+    }
+}
+
+suspend fun forgettingTheBirthDayRoutineAndCleaningTheDesk() {
+    coroutineScope {
+        val workingJob = launch {
+            try {
+                workingConsciousness()
+            } finally {
+                logger.info("Cleaning the desk")
+            }
+        }
+        launch {
+            delay(2000L)
+            workingJob.cancelAndJoin()
+            logger.info("I forgot the birthday! Let's go to the mall!")
+        }
+    }
+}
+
+suspend fun forgettingTheBirthDayRoutineAndCleaningTheDeskOnCompletion() {
+    coroutineScope {
+        val workingJob = launch {
+            workingConsciousness()
+        }
+        workingJob.invokeOnCompletion { exception: Throwable? ->
+            logger.info("Cleaning the desk")
+        }
+        launch {
+            delay(2000L)
+            workingJob.cancelAndJoin()
+            logger.info("I forgot the birthday! Let's go to the mall!")
+        }
+    }
+}
+
+suspend fun forgettingTheBirthDayRoutineWhileWorkingHard() {
+    coroutineScope {
+        val workingJob = launch {
+            workingHard()
+        }
+        launch {
+            delay(2000L)
+            workingJob.cancelAndJoin()
             logger.info("I forgot the birthday! Let's go to the mall!")
         }
     }

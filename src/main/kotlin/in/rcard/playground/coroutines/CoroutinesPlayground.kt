@@ -17,7 +17,7 @@ import org.slf4j.LoggerFactory
 val logger: Logger = LoggerFactory.getLogger("CoroutinesPlayground")
 suspend fun main() {
     logger.info("Starting the morning routine")
-    forgettingTheBirthDayWhileWorkingAndDrinkingWaterRoutine()
+    forgettingTheBirthDayRoutineAndCleaningTheDeskOnCompletion()
     logger.info("Ending the morning routine")
 }
 
@@ -136,12 +136,11 @@ suspend fun forgettingTheBirthDayRoutine() {
 }
 
 suspend fun forgettingTheBirthDayRoutineAndCleaningTheDesk() {
+    val desk = Desk()
     coroutineScope {
         val workingJob = launch {
-            try {
+            desk.use { _ ->
                 workingConsciousness()
-            } finally {
-                logger.info("Cleaning the desk")
             }
         }
         launch {
@@ -153,12 +152,13 @@ suspend fun forgettingTheBirthDayRoutineAndCleaningTheDesk() {
 }
 
 suspend fun forgettingTheBirthDayRoutineAndCleaningTheDeskOnCompletion() {
+    val desk = Desk()
     coroutineScope {
         val workingJob = launch {
             workingConsciousness()
         }
         workingJob.invokeOnCompletion { exception: Throwable? ->
-            logger.info("Cleaning the desk")
+            desk.close()
         }
         launch {
             delay(2000L)
@@ -259,5 +259,15 @@ suspend fun drinkWater() {
         logger.info("Drinking water")
         delay(1000L)
         logger.info("Water drunk")
+    }
+}
+
+class Desk : AutoCloseable {
+    init {
+        logger.info("Starting to work on the desk")
+    }
+
+    override fun close() {
+        logger.info("Cleaning the desk")
     }
 }

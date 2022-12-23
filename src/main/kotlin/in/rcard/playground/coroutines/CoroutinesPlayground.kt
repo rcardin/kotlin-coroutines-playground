@@ -1,6 +1,7 @@
 package `in`.rcard.playground.coroutines
 
 import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.CoroutineName
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -13,11 +14,12 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
+import kotlin.coroutines.CoroutineContext
 
 val logger: Logger = LoggerFactory.getLogger("CoroutinesPlayground")
 suspend fun main() {
     logger.info("Starting the morning routine")
-    forgettingTheBirthDayRoutineAndCleaningTheDeskOnCompletion()
+    coroutineCtxOverride()
     logger.info("Ending the morning routine")
 }
 
@@ -269,5 +271,47 @@ class Desk : AutoCloseable {
 
     override fun close() {
         logger.info("Cleaning the desk")
+    }
+}
+
+val context: CoroutineContext = CoroutineName("Morning Routine") + Dispatchers.Default + Job()
+val newContext: CoroutineContext = context.minusKey(CoroutineName)
+
+suspend fun asynchronousGreeting() {
+    coroutineScope {
+        launch(CoroutineName("Greeting Coroutine") + Dispatchers.Default) {
+            logger.info("Hello Everyone!")
+        }
+    }
+}
+
+fun coroutineCtxPlayground() {
+    val context: CoroutineContext = CoroutineName("Morning Routine") + Dispatchers.Default + Job()
+    logger.info("Coroutine name: {}", context[CoroutineName]?.name)
+}
+
+suspend fun coroutineCtxInheritance() {
+    coroutineScope {
+        launch(CoroutineName("Greeting Coroutine")) {
+            logger.info("Hello everyone from the outer coroutine!")
+            launch {
+                logger.info("Hello everyone from the inner coroutine!")
+            }
+            delay(200)
+            logger.info("Hello again from the outer coroutine!")
+        }
+    }
+}
+
+suspend fun coroutineCtxOverride() {
+    coroutineScope {
+        launch(CoroutineName("Greeting Coroutine")) {
+            logger.info("Hello everyone from the outer coroutine!")
+            launch(CoroutineName("Greeting Inner Coroutine")) {
+                logger.info("Hello everyone from the inner coroutine!")
+            }
+            delay(200L)
+            logger.info("Hello again from the outer coroutine!")
+        }
     }
 }

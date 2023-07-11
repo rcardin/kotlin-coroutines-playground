@@ -4,3 +4,5 @@
 # Kotlin Coroutines Playground
 
 The repository contains the code associated with the article [Kotlin Coroutines - A Comprehensive Introduction](https://blog.rockthejvm.com/kotlin-coroutines-101/), published on the RockTheJvm platform.
+
+Moreover, it contains also some experiments I made to understand better the concepts behind Kotlin Coroutines.

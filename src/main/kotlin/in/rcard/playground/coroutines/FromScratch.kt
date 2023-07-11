@@ -15,6 +15,11 @@ fun add(a: Int, b: Int, cont: Cont<Int>) {
     cont.apply(a + b)
 }
 
+fun print(n: Int, cont: Cont<Unit>) {
+    println(n)
+    cont.apply(Unit)
+}
+
 // We try to implement this small program using a continuation-passing style
 // System.out.println(1 + 2 + 3);
 // System.exit(0);
@@ -28,8 +33,7 @@ fun main() {
                 r1,
                 3,
                 Cont { r2 ->
-                    println(r2)
-                    exitProcess(0)
+                    print(r2, Cont { exitProcess(0) })
                 },
             )
         },
